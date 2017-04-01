@@ -68,10 +68,14 @@ class PersephoneClient:
         resp.raise_for_status()
         return resp.json()
 
+    def delete_build(self, project_id, build_id):
+        resp = requests.delete(self._get_build_endpoint(project_id, build_id), auth=self._auth)
+        resp.raise_for_status()
+
     def finish_build(self, project_id, build_id):
         resp = requests.post(
             parse.urljoin(self._get_build_endpoint(project_id, build_id), 'finish'),
-            auth=(self.username, self.password),
+            auth=self._auth,
         )
         resp.raise_for_status()
         return resp.json()
@@ -79,7 +83,7 @@ class PersephoneClient:
     def fail_build(self, project_id, build_id):
         resp = requests.post(
             parse.urljoin(self._get_build_endpoint(project_id, build_id), 'fail'),
-            auth=(self.username, self.password),
+            auth=self._auth,
         )
         resp.raise_for_status()
         return resp.json()
@@ -87,7 +91,7 @@ class PersephoneClient:
     def post_screenshot(self, project_id, build_id, name, image_data, metadata):
         resp = requests.post(
             self._get_screenshots_endpoint(project_id, build_id),
-            auth=(self.username, self.password),
+            auth=self._auth,
             data={
                 'name': name,
                 'metadata': json.dumps(metadata),
@@ -139,13 +143,13 @@ class PersephoneBuildHelper:
         self.original_build_number = original_build_number
         self.original_build_url = original_build_url
         self.pull_request_id = pull_request_id
-        self.build_id = None
+        self.build_id = build_id
 
     def create_build(self):
         """
         Creates a build in Persephone and saves the build id in self.build_id
         """
-        if self.build_id is not None:
+        if self.build_id:
             raise PersephoneException(
                 'There is already a build running. '
                 'Please finish or fail the previous one before creating a new one.')
@@ -159,16 +163,25 @@ class PersephoneBuildHelper:
         )
         self.build_id = build['id']
 
+    def delete_build(self):
+        """
+        Deletes the current build.
+        """
+        if not self.build_id:
+            raise PersephoneException('No build is running. Please create a build first.')
+        self.client.delete_build(self.project_id, self.build_id)
+        self.build_id = None
+
     def finish_build(self):
         """Marks the current build as finished."""
-        if self.build_id is None:
+        if not self.build_id:
             raise PersephoneException('No build is running. Please create a build first.')
         self.client.finish_build(self.project_id, self.build_id)
         self.build_id = None
 
     def fail_build(self):
         """Marks the current build as failed."""
-        if self.build_id is None:
+        if not self.build_id:
             raise PersephoneException('No build is running. Please create a build first.')
         self.client.fail_build(self.project_id, self.build_id)
         self.build_id = None
@@ -181,6 +194,8 @@ class PersephoneBuildHelper:
         :param metadata: An optional freeform dict with JSON serializable values to attach to the
         image as metadata.
         """
-        if self.build_id is None:
+        if not self.build_id:
             raise PersephoneException('No build is running. Please create a build first.')
-        self.client.post_screenshot(self.project_id, self.build_id, name, image_data, metadata)
+        screenshot = self.client.post_screenshot(
+            self.project_id, self.build_id, name, image_data, metadata)
+        return screenshot['id']
