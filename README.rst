@@ -47,7 +47,28 @@ build ID using ``persephone.build_id`` right after calling ``create_build`` and 
 testing module. Inside, you can create a minimal ``PersephoneBuildHelper`` using only the endpoint,
 username, password and build_id and use that to upload the screenshots.
 
-4. Using the command line interface
+4. Using the built-in Jenkins and CircleCI helpers
+==================================================
+
+If you're using Jenkins or CircleCI to build your project, then you can skip some of the work
+described above. persephone-client-py comes with helper classes that can take most of the
+information from the environment variables those system provide. You still have to provide the
+endpoint, username, password and project ID. That can be done either via environment variables
+(``PERSEPHONE_ENDPOINT``, ``PERSEPHONE_USERNAME``, ``PERSEPHONE_PASSWORD``,
+``PERSEPHONE_PROJECT_ID``) or by passing them via kwargs to the respective constructor. If those
+environment variables are present, you can just construct the objects and start using the API::
+
+    persephone = JenkinsBuildHelper()
+    # or
+    persephone = CircleCIBuildHelper()
+    # and then
+    persephone.create_build()
+    persephone.upload_screenshot(...)
+
+The Jenkins helper support standard builds as well as those triggered by the GitHub Pull Request
+Builder plugin. CircleCI has native support for master/branch/PR builds.
+
+5. Using the command line interface
 ===================================
 
 After you install persephone-client-py, you can use the ``persephone_cli`` command-line interface to
