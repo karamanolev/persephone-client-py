@@ -25,31 +25,31 @@ def main():
     parser.add_argument('--username', default=username, required=not username)
     parser.add_argument('--password', default=password, required=not password)
     parser.add_argument('--project-id', default=project_id, required=not project_id)
-    parser.add_argument('--commit_hash', default=commit_hash, required=False)
-    parser.add_argument('--branch_name', default=branch_name, required=False)
-    parser.add_argument('--original_build_number', default=original_build_number, required=False)
-    parser.add_argument('--original_build_url', default=original_build_url, required=False)
-    parser.add_argument('--pull_request_id', default=pull_request_id, required=False)
+    parser.add_argument('--commit-hash', default=commit_hash, required=False)
+    parser.add_argument('--branch-name', default=branch_name, required=False)
+    parser.add_argument('--original-build-number', default=original_build_number, required=False)
+    parser.add_argument('--original-build-url', default=original_build_url, required=False)
+    parser.add_argument('--pull-request-id', default=pull_request_id, required=False)
     subparsers = parser.add_subparsers()
 
-    parser_create_build = subparsers.add_parser('create_build')
-    parser_create_build.set_defaults(action='create_build')
+    parser_create_build = subparsers.add_parser('create-build')
+    parser_create_build.set_defaults(action='create-build')
 
     parser_delete_build = subparsers.add_parser('delete_build')
     parser_delete_build.set_defaults(action='delete_build')
-    parser_delete_build.add_argument('--build_id', default=build_id, required=False)
+    parser_delete_build.add_argument('--build-id', default=build_id, required=False)
 
     parser_finish_build = subparsers.add_parser('finish_build')
     parser_finish_build.set_defaults(action='finish_build')
-    parser_finish_build.add_argument('--build_id', default=build_id, required=False)
+    parser_finish_build.add_argument('--build-id', default=build_id, required=False)
 
     parser_fail_build = subparsers.add_parser('fail_build')
     parser_fail_build.set_defaults(action='fail_build')
-    parser_fail_build.add_argument('--build_id', default=build_id, required=False)
+    parser_fail_build.add_argument('--build-id', default=build_id, required=False)
 
     parser_upload_screenshot = subparsers.add_parser('upload_screenshot')
     parser_upload_screenshot.set_defaults(action='upload_screenshot')
-    parser_upload_screenshot.add_argument('--build_id', default=build_id, required=False)
+    parser_upload_screenshot.add_argument('--build-id', default=build_id, required=False)
     parser_upload_screenshot.add_argument('--image-path', default=None)
     parser_upload_screenshot.add_argument('--image-name', default=None)
     parser_upload_screenshot.add_argument('--image-metadata', default=None)
@@ -86,31 +86,31 @@ def main():
         build_id,
     )
 
-    if action == 'create_build':
+    if action == 'create-build':
         build = client.create_build()
         print(build['id'])
-    elif action == 'delete_build':
+    elif action == 'delete-build':
         if not build_id:
             print('ERROR: Please specify a build id.')
             sys.exit(1)
         client.delete_build()
-    elif action == 'finish_build':
+    elif action == 'finish-build':
         if not build_id:
             print('ERROR: Please specify a build id.')
             sys.exit(1)
         client.finish_build()
-    elif action == 'fail_build':
+    elif action == 'fail-build':
         if not build_id:
             print('ERROR: Please specify a build id.')
             sys.exit(
                 1)
         client.fail_build()
-    elif action == 'fail_build':
+    elif action == 'fail-build':
         if not build_id:
             print('ERROR: Please specify a build id.')
             sys.exit(1)
         client.fail_build()
-    elif action == 'upload_screenshot':
+    elif action == 'upload-screenshot':
         if not build_id or not image_name or not image_path:
             print('ERROR: Please specify a build id, image name and image path.')
             sys.exit(1)

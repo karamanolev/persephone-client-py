@@ -14,7 +14,9 @@ You can install persephone-client-pi from pip::
 2. Usage
 ========
 
-There are two main classes - ``PersephoneClient`` and ``PersephoneBuildHelper``. The former can be used to access the full-range of the API, while the latter is more useful during a CI run in order to create a build, upload screenshots and finish the build.
+There are two main classes - ``PersephoneClient`` and ``PersephoneBuildHelper``. The former can be
+used to access the full-range of the API, while the latter is more useful during a CI run in order
+to create a build, upload screenshots and finish the build.
 
 3. Using ``PersephoneBuildHelper`` to submit screenshots during a build
 =======================================================================
@@ -39,18 +41,31 @@ The example here uses the standard Jenkins environment variables. You can use an
     # After the build is finished - tearDownClass or end of wrapper script
     persephone.finish_build()
 
-If you create the build and then want to use a separate instance of ``PersephoneBuildHelper`` to upload the screenshots (for example the build is managed by a wrapper script), you can access the build ID using ``persephone.build_id`` right after calling ``create_build`` and pass that to the testing module. Inside, you can create a minimal ``PersephoneBuildHelper`` using only the endpoint, username, password and build_id and use that to upload the screenshots.
+If you create the build and then want to use a separate instance of ``PersephoneBuildHelper`` to
+upload the screenshots (for example the build is managed by a wrapper script), you can access the
+build ID using ``persephone.build_id`` right after calling ``create_build`` and pass that to the
+testing module. Inside, you can create a minimal ``PersephoneBuildHelper`` using only the endpoint,
+username, password and build_id and use that to upload the screenshots.
 
 4. Using the command line interface
 ===================================
 
-After you install persephone-client-py, you can use the ``persephone_cli`` command-line interface to manage builds and upload screenshots. The configuration parameters (endpoint, username, etc.) can be passed via environment variables or command line options. You can list the options using ``persephone_cli --help``. The environment variables are available with the ``PERSEPHONE_`` prefix. For example, if the command-line option is ``--commit-hash`` the respective environment variable is ``PERSEPHONE_COMMIT_HASH``. The environment variables, if present, can still be overridden using the command line options.
+After you install persephone-client-py, you can use the ``persephone_cli`` command-line interface to
+manage builds and upload screenshots. The configuration parameters (endpoint, username, etc.) can be
+passed via environment variables or command line options. You can list the options using
+``persephone_cli --help``. The environment variables are available with the ``PERSEPHONE_`` prefix.
+For example, if the command-line option is ``--commit-hash`` the respective environment variable is
+``PERSEPHONE_COMMIT_HASH``. The environment variables, if present, can still be overridden using the
+command line options.
 
 Creating a build::
 
-    $ persephone-cli --endpoint "http://persephone.yourdomain.com/" --username admin --password admin create_build
+    $ persephone-cli --endpoint "http://persephone.yourdomain.com/" --username admin \
+        --password admin create_build
     5
 
-Uploading a screenshot::
+The above command outputs the new build ID. To upload a screenshot::
 
-    $ persephone-cli --endpoint "http://persephone.yourdomain.com/" --username admin --password admin --image-path myimage.png --image-name "Main Page.png" upload_screenshot
+    $ persephone-cli --endpoint "http://persephone.yourdomain.com/" --username admin \
+        --password admin upload_screenshot --build-id 5 --image-path myimage.png \
+        --image-name "Main Page.png"
