@@ -123,7 +123,7 @@ class JenkinsBuildHelper(PersephoneBuildHelper):
 
 class CircleCIBuildHelper(PersephoneBuildHelper):
     def __init__(self, *args, **kwargs):
-        env_pull_request_id = os.environ.get('CI_PULL_REQUEST', '').split('/')[-1]
+        env_pull_request_id = os.environ.get('CI_PULL_REQUEST', '').rsplit('/', 1)[-1] or None
         super().__init__(
             *args,
             root_endpoint=kwargs.pop('root_endpoint', os.getenv('PERSEPHONE_ENDPOINT')),
