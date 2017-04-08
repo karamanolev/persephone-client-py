@@ -10,7 +10,7 @@ with open(os.path.join(BASE_DIR, 'README.rst')) as f:
 
 setup(
     name='persephone-client-py',
-    version='0.0.1',
+    version='0.0.2',
     description='A Python client for the Persephone REST API',
     long_description=open('README.rst').read(),
     classifiers=[

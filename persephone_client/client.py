@@ -3,6 +3,8 @@ from urllib import parse
 
 import requests
 
+DEFAULT_TIMEOUT = 12.05
+
 
 class PersephoneException(Exception):
     pass
@@ -11,10 +13,11 @@ class PersephoneException(Exception):
 class PersephoneClient:
     """A lower level client for the Persephone REST API"""
 
-    def __init__(self, root_endpoint, username, password):
+    def __init__(self, root_endpoint, username, password, timeout=DEFAULT_TIMEOUT):
         self.root_endpoint = root_endpoint
         self.username = username
         self.password = password
+        self.timeout = DEFAULT_TIMEOUT
         self._auth = (username, password)
 
     def _get_api_endpoint(self):
@@ -36,22 +39,38 @@ class PersephoneClient:
         return parse.urljoin(self._get_build_endpoint(project_id, build_id), 'screenshots/')
 
     def get_projects(self):
-        resp = requests.get(self._get_projects_endpoint(), auth=self._auth)
+        resp = requests.get(
+            self._get_projects_endpoint(),
+            auth=self._auth,
+            timeout=self.timeout,
+        )
         resp.raise_for_status()
         return resp.json()
 
     def get_project(self, project_id):
-        resp = requests.get(self._get_project_endpoint(project_id), auth=self._auth)
+        resp = requests.get(
+            self._get_project_endpoint(project_id),
+            auth=self._auth,
+            timeout=self.timeout,
+        )
         resp.raise_for_status()
         return resp.json()
 
     def get_builds(self, project_id):
-        resp = requests.get(self._get_builds_endpoint(project_id), auth=self._auth)
+        resp = requests.get(
+            self._get_builds_endpoint(project_id),
+            auth=self._auth,
+            timeout=self.timeout,
+        )
         resp.raise_for_status()
         return resp.json()
 
     def get_build(self, project_id, build_id):
-        resp = requests.get(self._get_build_endpoint(project_id, build_id), auth=self._auth)
+        resp = requests.get(
+            self._get_build_endpoint(project_id, build_id),
+            auth=self._auth,
+            timeout=self.timeout,
+        )
         resp.raise_for_status()
         return resp.json()
 
@@ -66,18 +85,25 @@ class PersephoneClient:
                 'original_build_number': original_build_number,
                 'original_build_url': original_build_url,
                 'pull_request_id': pull_request_id,
-            })
+            },
+            timeout=self.timeout,
+        )
         resp.raise_for_status()
         return resp.json()
 
     def delete_build(self, project_id, build_id):
-        resp = requests.delete(self._get_build_endpoint(project_id, build_id), auth=self._auth)
+        resp = requests.delete(
+            self._get_build_endpoint(project_id, build_id),
+            auth=self._auth,
+            timeout=self.timeout,
+        )
         resp.raise_for_status()
 
     def finish_build(self, project_id, build_id):
         resp = requests.post(
             parse.urljoin(self._get_build_endpoint(project_id, build_id), 'finish'),
             auth=self._auth,
+            timeout=self.timeout,
         )
         resp.raise_for_status()
         return resp.json()
@@ -86,6 +112,7 @@ class PersephoneClient:
         resp = requests.post(
             parse.urljoin(self._get_build_endpoint(project_id, build_id), 'fail'),
             auth=self._auth,
+            timeout=self.timeout,
         )
         resp.raise_for_status()
         return resp.json()
@@ -101,6 +128,7 @@ class PersephoneClient:
             files={
                 'image': image_data,
             },
+            timeout=self.timeout,
         )
         resp.raise_for_status()
         return resp.json()
